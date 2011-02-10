@@ -4,7 +4,7 @@ from django.template import Template, Context
 from django.contrib.sites.models import Site
 from django.template.loader import render_to_string
 
-def send_html_email(recipients, template_path, context={},
+def send_templated_email(recipients, template_path, context={},
                     from_email=settings.DEFAULT_FROM_EMAIL):
     current_site = Site.objects.get(id=settings.SITE_ID)
     context["current_site"] = current_site
