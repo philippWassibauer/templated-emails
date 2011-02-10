@@ -14,8 +14,17 @@ def send_html_email(recipients, template_path, context={},
     subject = render_to_string("%s/short.txt"%template_path, context)\
                                 .replace('\n', '').replace('\r', '')
     text = render_to_string("%s/email.txt"%template_path, context)
-    body = render_to_string("%s/email.html"%template_path, context)
+    
+    body = None
+    try: # TODO: this is not the right way to do it, but it works for now and I will come back to it
+        body = render_to_string("%s/email.html"%template_path, context)
+    except:
+        pass
+    
     msg = EmailMultiAlternatives(subject, text, from_email, recipients)
-    msg.attach_alternative(body, "text/html")
+    
+    if body:
+        msg.attach_alternative(body, "text/html")
+        
     msg.send()
 
