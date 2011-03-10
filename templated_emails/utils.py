@@ -3,6 +3,8 @@ from django.conf import settings
 from django.template import Template, Context
 from django.contrib.sites.models import Site
 from django.template.loader import render_to_string
+import logging
+from django.template.loader import get_template
 
 def send_templated_email(recipients, template_path, context={},
                     from_email=settings.DEFAULT_FROM_EMAIL):
@@ -16,15 +18,18 @@ def send_templated_email(recipients, template_path, context={},
     text = render_to_string("%s/email.txt"%template_path, context)
     
     body = None
-    try: # TODO: this is not the right way to do it, but it works for now and I will come back to it
-        body = render_to_string("%s/email.html"%template_path, context)
-    except:
-        pass
-    
+    body_template = None
+    html_path = "%s/email.html"%template_path
+    try:
+        body_template = get_template(html_path)
+    except TemplateDoesNotExist:
+        logging.info("Email sent without HTML, since %s not found"%html_path)
+        
     msg = EmailMultiAlternatives(subject, text, from_email, recipients)
     
-    if body:
+    if body_template:
+        body = render_to_string(html_path, context)
         msg.attach_alternative(body, "text/html")
-        
+
     msg.send()
 
