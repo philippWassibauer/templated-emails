@@ -7,7 +7,12 @@ It does this by using a very similar mechanism as django-notifications. Each ema
 
 A good practice is to put all emails in an emails/ folder within your templates folder, so it is easy to see what emails are being sent by your system.
 
+Recipients can either be an array of emails (as strings) or users. If you pass users it will also try to find the users stored language (accounts.Account.language in pinax) and send it using it.
+
 Sending an emails works like this::
 
     from templated_emails.utils import send_templated_email
     send_templated_email(["phil@maptales.com"], "emails/invite_friends", {"my_variable":"blafoo"})
+    
+    
+The system will add current_site (the Site object of the Django Project) and STATIC_URL (for linking in static content) to the context of your templates.
