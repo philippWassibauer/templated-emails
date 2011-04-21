@@ -24,7 +24,6 @@ def send_templated_email(recipients, template_path, context={},
     """
     current_language = get_language()
     for recipient in recipients:
-        
         # if it is user, get the email and switch the language
         if isinstance(recipient, User):
             email = recipient.email
@@ -57,7 +56,7 @@ def send_templated_email(recipients, template_path, context={},
         except TemplateDoesNotExist:
             logging.info("Email sent without HTML, since %s not found"%html_path)
         
-        msg = EmailMultiAlternatives(subject, text, from_email, recipients)
+        msg = EmailMultiAlternatives(subject, text, from_email, [email])
         
         if body_template:
             body = render_to_string(html_path, context)
