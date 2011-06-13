@@ -12,7 +12,31 @@ Recipients can either be an array of emails (as strings) or users. If you pass u
 Sending an emails works like this::
 
     from templated_emails.utils import send_templated_email
-    send_templated_email(["phil@maptales.com"], "emails/invite_friends", {"my_variable":"blafoo"})
+    send_templated_email(["philipp@gidsy.com"], "emails/invite_friends", {"my_variable":"blafoo"})
     
     
 The system will add current_site (the Site object of the Django Project) and STATIC_URL (for linking in static content) to the context of your templates.
+
+
+Inline CSS Rules
+===============
+Inline CSS Rules are annoying and tedious, but a neccessity if you want to support all email clients.
+Since 0.3 pynliner is included that will take the CSS from the HEAD and put it into each element that matches the rule
+
+There is a toggle you can set in settings.py to turn this feature on or off:
+TEMPLATEDEMAILS_USE_PYNLINER = False is the default value.
+
+
+Install
+============
+pip install -e http://github.com/philippWassibauer/templated-emails.git#egg=templated-emails
+
+or
+
+pip install templated-emails
+
+
+Dependencies
+============
+* pynliner
+* cssutils

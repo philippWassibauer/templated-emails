@@ -60,6 +60,9 @@ def send_templated_email(recipients, template_path, context={},
         
         if body_template:
             body = render_to_string(html_path, context)
+            if getattr(settings, "TEMPLATEDEMAILS_USE_PYNLINER", False):
+                import pynliner
+                messages['full.html'] = pynliner.fromString(messages['full.html'])
             msg.attach_alternative(body, "text/html")
     
         msg.send()

@@ -10,10 +10,10 @@ long_description = open('README.rst').read()
 
 setup(
     name = 'templated-emails',
-    version = "0.1",
+    version = "0.3",
     url = 'https://github.com/philippWassibauer/templated-emails',
     author = "Philipp Wassibauer",
-    author_email = "phil@maptales.com",
+    author_email = "phil@gidsy.com",
     license = license_text,
     packages = ['templated_emails'],
     data_files=[('', ['LICENSE.txt', 'README.rst'])],
@@ -24,5 +24,9 @@ setup(
                    'Framework :: Django',
                    'Intended Audience :: Developers',
                    'License :: OSI Approved :: BSD License',
-                   'Topic :: Internet :: WWW/HTTP :: Dynamic Content']
+                   'Topic :: Internet :: WWW/HTTP :: Dynamic Content'],
+    install_requires=[
+        'pynliner',
+        'cssutils',
+    ],
 )
