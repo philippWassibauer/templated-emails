@@ -18,7 +18,7 @@ class LanguageStoreNotAvailable(Exception):
 def send_templated_email(recipients, template_path, context={},
                     from_email=settings.DEFAULT_FROM_EMAIL):
     """
-        recipients can be either a list of emails of a list of users,
+        recipients can be either a list of emails or a list of users,
         if it is users the system will change to the language that the
         user has set as theyr mother toungue
     """
