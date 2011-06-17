@@ -9,7 +9,7 @@ setup(
     url = 'https://github.com/philippWassibauer/templated-emails',
     author = "Philipp Wassibauer",
     author_email = "phil@gidsy.com",
-    license = 'BSD License',
+    license = 'MIT License',
     packages = ['templated_emails'],
     description = 'Like django-notifications, but just for sending plain emails. Written because it is ennoying to fork other apps just to make an email into an HTML email',
     long_description=long_description,
@@ -17,7 +17,7 @@ setup(
                    'Environment :: Web Environment',
                    'Framework :: Django',
                    'Intended Audience :: Developers',
-                   'License :: OSI Approved :: BSD License',
+                   'License :: OSI Approved :: MIT License',
                    'Topic :: Internet :: WWW/HTTP :: Dynamic Content'],
     install_requires=[
         'pynliner',
