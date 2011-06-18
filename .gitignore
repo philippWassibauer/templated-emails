@@ -1,3 +1,4 @@
 build
 dist
 templated_emails.egg-info
+*.pyc
