@@ -66,7 +66,6 @@ def send_templated_email(recipients, template_path, context=None,
                 import pynliner
                 body = pynliner.fromString(body)
             msg.attach_alternative(body, "text/html")
-            msg.content_subtype = "html"
         except TemplateDoesNotExist:
             logging.info("Email sent without HTML, since %s not found" % html_path)
 
