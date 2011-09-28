@@ -11,6 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth.models import User
+from django.template.base import TemplateDoesNotExist
 
 class LanguageStoreNotAvailable(Exception):
     pass
@@ -18,7 +19,7 @@ class LanguageStoreNotAvailable(Exception):
 def send_templated_email(recipients, template_path, context={},
                     from_email=settings.DEFAULT_FROM_EMAIL):
     """
-        recipients can be either a list of emails or a list of users,
+        recipients can be either a list of emails of a list of users,
         if it is users the system will change to the language that the
         user has set as theyr mother toungue
     """
@@ -45,7 +46,6 @@ def send_templated_email(recipients, template_path, context={},
         context = Context(context)
         subject = render_to_string("%s/short.txt"%template_path, context)\
                                     .replace('\n', '').replace('\r', '')
-        #import nose; nose.tools.set_trace()
         text = render_to_string("%s/email.txt"%template_path, context)
         
         body = None
@@ -57,7 +57,6 @@ def send_templated_email(recipients, template_path, context={},
             logging.info("Email sent without HTML, since %s not found"%html_path)
         
         msg = EmailMultiAlternatives(subject, text, from_email, [email])
-        
         if body_template:
             body = render_to_string(html_path, context)
             if getattr(settings, "TEMPLATEDEMAILS_USE_PYNLINER", False):
