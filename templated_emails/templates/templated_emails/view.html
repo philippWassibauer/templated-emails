@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd"
+    >
+<html lang="en">
+<head>
+    <style type="text/css">
+        {% include "notification/html/style.css" %}
+
+        .if, .end-if{
+            background-color: #EFEFEF;
+        }
+        .if{
+            margin-top: 6px;
+        }
+        .end-if{
+            margin-bottom: 6px;
+        }
+
+        .if-body{
+            border-left: #EFEFEF 1px solid;
+            padding: 1px 1px 1px 10px;
+        }
+
+    </style>
+    <title>template</title>
+</head>
+<body>
+    <a href="{% url templated_emails_index %}">back</a>
+
+    <h3>HTML:</h3>
+    <div>
+        {{ rendered_email|safe }}
+    </div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<ul>
+    {% for key,value in directory_tree.items %}
+        <li>
+            {% if value %}
+                {{ key }}
+                {% with template_name="templated_emails/directory.html" path=path|add:"/"|add:key %}
+                    {% include template_name with directory_tree=value path=path %}
+                {% endwith %}
+            {% else %}
+                {% with path|add:"/"|add:key as path %}
+                    <a href="{% url templated_email_view path %}">{{ key }}</a>
+                {% endwith %}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
