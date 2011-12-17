@@ -16,10 +16,13 @@ def recursive_block_replace(template, data=None, replace_static_url=True, replac
         if replace_static_url:
             final_string = final_string.replace("{{ STATIC_URL }}", settings.STATIC_URL)
         if replace_trans:
-            p = re.compile('(\{% blocktrans .+ %\})', re.MULTILINE|re.IGNORECASE)
+            p = re.compile('(\{% blocktrans .* %\})', re.IGNORECASE)
             final_string = p.sub('', final_string)
 
-            p = re.compile('(\{% endblocktrans %\})', re.MULTILINE|re.IGNORECASE)
+            p = re.compile('(\{% blocktrans %\})', re.IGNORECASE)
+            final_string = p.sub('', final_string)
+
+            p = re.compile('(\{% endblocktrans %\})', re.IGNORECASE)
             final_string = p.sub('', final_string)
 
             final_string = re.sub(r"\{% trans (.+) %\}", lambda x: x.group(1)[1:-1], final_string)

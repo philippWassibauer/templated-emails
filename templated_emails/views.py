@@ -21,14 +21,34 @@ def view(request, path, template_name="templated_emails/view.html"):
     # do this recursive until no more extends
     # then place html in blocks
     old_template_debug_setting = settings.TEMPLATE_DEBUG
-    rendered_email = ""
+    rendered_subject = ""
+    rendered_html = ""
+    rendered_text = ""
     try:
         settings.TEMPLATE_DEBUG = True
-        template = get_template("emails%s/email.html"%path)
-        rendered_email = recursive_block_replace(template, {})
+        try:
+            template = get_template("emails%s/email.html"%path)
+            rendered_html = recursive_block_replace(template, {})
+        except:
+            pass # there might be no html
+
+        try:
+            template = get_template("emails%s/email.txt"%path)
+            rendered_text = recursive_block_replace(template, {})
+        except:
+            pass # there might be no text file
+
+        try:
+            template = get_template("emails%s/short.txt"%path)
+            rendered_subject = recursive_block_replace(template, {})
+        except: 
+            pass # there might be no html
+
     finally:
         settings.TEMPLATE_DEBUG = old_template_debug_setting
 
     return render_to_response(template_name, {
-        "rendered_email": rendered_email,
+        "rendered_subject": rendered_subject,
+        "rendered_html": rendered_html,
+        "rendered_text": rendered_text,
     }, context_instance=RequestContext(request))

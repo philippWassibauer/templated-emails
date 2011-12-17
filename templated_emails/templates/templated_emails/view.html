@@ -21,15 +21,57 @@
             padding: 1px 1px 1px 10px;
         }
 
+        .body{
+            position: relative;
+            width: 650px;
+            margin: 80px auto;
+        }
+
+        h5{
+            margin-bottom: 8px;
+            
+        }
+
+        .content-block{
+            text-align: left;
+            margin: 0px;
+            padding: 5px;
+            moz-box-shadow:  0px 0px 10px #BBB;
+            -webkit-box-shadow: 0px 0px 10px #BBB;
+            box-shadow: 0px 0px 10px #BBB;
+        }
+
+        pre {
+            white-space: pre-wrap; /* css-3 */
+            white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
+            white-space: -pre-wrap; /* Opera 4-6 */
+            white-space: -o-pre-wrap; /* Opera 7 */
+            word-wrap: break-word; /* Internet Explorer 5.5+ */
+        }
+
     </style>
     <title>template</title>
 </head>
-<body>
-    <a href="{% url templated_emails_index %}">back</a>
+<body style="background-color: #FFFFFF;">
+    <div class="body">
+        <a href="{% url templated_emails_index %}">back</a>
 
-    <h3>HTML:</h3>
-    <div>
-        {{ rendered_email|safe }}
+        <h5>Title:</h5>
+        <div class="content-block">
+            <h3>{{ rendered_subject }}</h3>
+        </div>
+
+        <h5>HTML:</h5>
+        <div class="content-block">
+            {{ rendered_html|safe }}
+        </div>
+
+        <h5>Text:</h5>
+        <div class="content-block">
+            <pre>
+                {{ rendered_text }}
+            </pre>
+        </div>
     </div>
 </body>
 </html>
