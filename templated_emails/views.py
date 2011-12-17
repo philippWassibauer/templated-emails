@@ -9,10 +9,13 @@ from django.template.loader import get_template
 from django.template.base import Template
 
 def index(request, template_name="templated_emails/index.html"):
-    directory_tree = get_email_directories("templates/emails")
-    return render_to_response(template_name, {
-        "directory_tree": directory_tree,
-    }, context_instance=RequestContext(request))
+    if not request.user.is_superuser:
+        raise Http404
+    else:
+        directory_tree = get_email_directories("templates/emails")
+        return render_to_response(template_name, {
+            "directory_tree": directory_tree,
+        }, context_instance=RequestContext(request))
 
 
 def view(request, path, template_name="templated_emails/view.html"):
