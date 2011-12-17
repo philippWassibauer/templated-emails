@@ -5,7 +5,7 @@ long_description = open('README.rst').read()
 
 setup(
     name = 'templated-emails',
-    version = "0.4",
+    version = "0.5",
     url = 'https://github.com/philippWassibauer/templated-emails',
     author = "Philipp Wassibauer",
     author_email = "phil@gidsy.com",
