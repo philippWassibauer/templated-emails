@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-from mock import patch
 from django.utils import unittest
-from django.conf import settings
 from django.test import TestCase
-from templated_emails.views import parse_string_blocks, replace_blocks, replace_string_blocks
+from .views import parse_string_blocks, replace_blocks, replace_string_blocks
 
 
 test_extraction_string =  """{% block test %}tr
