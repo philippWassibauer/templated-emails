@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.utils import unittest
 from django.test import TestCase
-from .views import parse_string_blocks, replace_blocks, replace_string_blocks
+from .parse_util import parse_string_blocks, replace_blocks, replace_string_blocks
 
 
 test_extraction_string =  """{% block test %}tr

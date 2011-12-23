@@ -47,6 +47,7 @@ def replace_blocks(template, data):
     template_string = read_file(template.nodelist[0].source[0].name)
     return replace_string_blocks(template_string, data)
 
+
 def replace_string_blocks(string, data):
     for key in data:
         regex_string = '\{% block '+key+' %\}([\s\S\n\r\w]*?)\{% endblock %\}'
@@ -62,13 +63,16 @@ def replace_string_blocks(string, data):
 
     return string
 
+
 def fill_blocks(template, data):
     return data
+
 
 def parse_blocks(template, data):
     data = parse_string_blocks(read_file(template.nodelist[0].source[0].name),
                                data)
     return data
+
 
 def parse_string_blocks(string, data):
     # find all blocks
@@ -79,6 +83,7 @@ def parse_string_blocks(string, data):
         print item[0]
         data[item[0]] = item[1]
     return data
+
 
 def read_file(path):
     file = open(path, "r")
