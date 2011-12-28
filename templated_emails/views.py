@@ -13,7 +13,7 @@ def index(request, template_name="templated_emails/index.html"):
     if not request.user.is_superuser:
         raise Http404
     else:
-        directory_tree = get_email_directories("templates/emails")
+        directory_tree = get_email_directories(settings.EMAIL_TEMPLATES_DIRECTORY)
         return render_to_response(template_name, {
             "directory_tree": directory_tree,
         }, context_instance=RequestContext(request))
