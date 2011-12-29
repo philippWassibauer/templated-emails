@@ -1,2 +1,2 @@
 include README.rst
-include templates/templated_emails/*.html
+include templated_emails/templates/templated_emails/*.html
