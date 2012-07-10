@@ -17,7 +17,7 @@ setup(
             'templates/templated_emails/*.html',
         ]
     },
-    description = 'Like django-notifications, but just for sending plain emails. Written because it is ennoying to fork other apps just to make an email into an HTML email',
+    description = 'Like django-notifications, but just for sending plain emails. Written because it is annoying to fork other apps just to make an email into an HTML email',
     long_description=long_description,
     classifiers = ['Development Status :: 4 - Beta',
                    'Environment :: Web Environment',
