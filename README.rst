@@ -61,8 +61,7 @@ to Celery with this setting (default is False)::
 
     TEMPLATEDEMAILS_USE_CELERY = True
 
-Please note that the given context is just passed to celery. No conversion to
-IDs and back happens.
+Please note that the given context is passed to Celery unchanged.
 
 
 Install
