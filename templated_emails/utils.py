@@ -10,8 +10,10 @@ from django.db import models
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth.models import User
 
+
 class LanguageStoreNotAvailable(Exception):
     pass
+
 
 def get_email_directories(dir):
     directory_tree = False
@@ -22,7 +24,7 @@ def get_email_directories(dir):
             directory_tree[name] = get_email_directories(os.path.join(dir, name))
     return directory_tree
 
-    
+
 def send_templated_email(recipients, template_path, context=None,
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     fail_silently=False):
@@ -64,7 +66,7 @@ def send_templated_email(recipients, template_path, context=None,
 
         # load email text and subject
         subject = render_to_string(subject_path, context)
-        subject = "".join(subject.splitlines()) # this must be a single line
+        subject = "".join(subject.splitlines())  # this must be a single line
         text = render_to_string(text_path, context)
 
         msg = EmailMultiAlternatives(subject, text, from_email, [email])
