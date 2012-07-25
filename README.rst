@@ -53,6 +53,17 @@ There is a toggle you can set in settings.py to turn this feature on or off:
 TEMPLATEDEMAILS_USE_PYNLINER = False is the default value.
 
 
+Celery
+======
+
+Pynliner can be quite slow when inlining CSS. You can move all the execution
+to Celery with this setting (default is False)::
+
+    TEMPLATEDEMAILS_USE_CELERY = True
+
+Please note that the given context is passed to Celery unchanged.
+
+
 Install
 =======
 

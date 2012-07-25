@@ -10,8 +10,17 @@ from django.db import models
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth.models import User
 
+try:
+    from celery.task import task
+except ImportError:
+    task = lambda f: f
+
+use_celery = getattr(settings, 'TEMPLATEDEMAILS_USE_CELERY', False)
+
+
 class LanguageStoreNotAvailable(Exception):
     pass
+
 
 def get_email_directories(dir):
     directory_tree = False
@@ -22,7 +31,7 @@ def get_email_directories(dir):
             directory_tree[name] = get_email_directories(os.path.join(dir, name))
     return directory_tree
 
-    
+
 def send_templated_email(recipients, template_path, context=None,
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     fail_silently=False):
@@ -31,6 +40,18 @@ def send_templated_email(recipients, template_path, context=None,
         if it is users the system will change to the language that the
         user has set as theyr mother toungue
     """
+    recipient_pks = [r.pk for r in recipients if isinstance(r, User)]
+    recipient_emails = [e for e in recipients if not isinstance(e, User)]
+    send = _send_task.delay if use_celery else _send
+    send(recipient_pks, recipient_emails, template_path, context, from_email,
+         fail_silently)
+
+
+def _send(recipient_pks, recipient_emails, template_path, context, from_email,
+          fail_silently):
+    recipients = list(User.objects.filter(pk__in=recipient_pks))
+    recipients += recipient_emails
+
     current_language = get_language()
     current_site = Site.objects.get(id=settings.SITE_ID)
 
@@ -64,7 +85,7 @@ def send_templated_email(recipients, template_path, context=None,
 
         # load email text and subject
         subject = render_to_string(subject_path, context)
-        subject = "".join(subject.splitlines()) # this must be a single line
+        subject = "".join(subject.splitlines())  # this must be a single line
         text = render_to_string(text_path, context)
 
         msg = EmailMultiAlternatives(subject, text, from_email, [email])
@@ -84,6 +105,8 @@ def send_templated_email(recipients, template_path, context=None,
         # reset environment to original language
         if isinstance(recipient, User):
             activate(current_language)
+if use_celery:
+    _send_task = task(_send)
 
 
 def get_users_language(user):
