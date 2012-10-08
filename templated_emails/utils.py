@@ -83,8 +83,8 @@ def _send(recipient_pks, recipient_emails, template_path, context, from_email,
         context['recipient'] = recipient
         context['email'] = email
 
-        # load email text and subject
-        subject = render_to_string(subject_path, context)
+        # load email subject, strip and remove line breaks
+        subject = render_to_string(subject_path, context).strip()
         subject = "".join(subject.splitlines())  # this must be a single line
         text = render_to_string(text_path, context)
 
