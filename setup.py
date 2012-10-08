@@ -6,7 +6,7 @@ long_description = open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
 
 setup(
     name = 'templated-emails',
-    version = "0.6.6",
+    version = "0.6.7",
     url = 'https://github.com/philippWassibauer/templated-emails',
     author = "Philipp Wassibauer",
     author_email = "phil@gidsy.com",
