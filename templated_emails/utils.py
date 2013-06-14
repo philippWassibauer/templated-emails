@@ -15,7 +15,15 @@ try:
 except ImportError:
     task = lambda f: f
 
+use_pynliner = getattr(settings, 'TEMPLATEDEMAILS_USE_PYNLINER', False)
 use_celery = getattr(settings, 'TEMPLATEDEMAILS_USE_CELERY', False)
+
+pynliner = None
+if use_pynliner:
+    try:
+        import pynliner
+    except ImportError:
+        pass
 
 
 class LanguageStoreNotAvailable(Exception):
@@ -93,8 +101,7 @@ def _send(recipient_pks, recipient_emails, template_path, context, from_email,
         # try to attach the html variant
         try:
             body = render_to_string(html_path, context)
-            if getattr(settings, "TEMPLATEDEMAILS_USE_PYNLINER", False):
-                import pynliner
+            if pynliner:
                 body = pynliner.fromString(body)
             msg.attach_alternative(body, "text/html")
         except TemplateDoesNotExist:
