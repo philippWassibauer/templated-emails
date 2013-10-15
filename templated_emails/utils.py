@@ -34,7 +34,7 @@ def get_email_directories(dir):
 
 def send_templated_email(recipients, template_path, context=None,
                     from_email=settings.DEFAULT_FROM_EMAIL,
-                    fail_silently=False):
+                    fail_silently=False, extra_headers=None):
     """
         recipients can be either a list of emails or a list of users,
         if it is users the system will change to the language that the
@@ -44,13 +44,13 @@ def send_templated_email(recipients, template_path, context=None,
     recipient_emails = [e for e in recipients if not isinstance(e, User)]
     send = _send_task.delay if use_celery else _send
     msg = send(recipient_pks, recipient_emails, template_path, context, from_email,
-         fail_silently)
+         fail_silently, extra_headers=extra_headers)
 
     return msg
 
 
 def _send(recipient_pks, recipient_emails, template_path, context, from_email,
-          fail_silently):
+          fail_silently, extra_headers=None):
     recipients = list(User.objects.filter(pk__in=recipient_pks))
     recipients += recipient_emails
 
@@ -90,7 +90,8 @@ def _send(recipient_pks, recipient_emails, template_path, context, from_email,
         subject = "".join(subject.splitlines())  # this must be a single line
         text = render_to_string(text_path, context)
 
-        msg = EmailMultiAlternatives(subject, text, from_email, [email])
+        msg = EmailMultiAlternatives(subject, text, from_email, [email],
+                                     headers=extra_headers)
 
         # try to attach the html variant
         try:
