@@ -43,8 +43,10 @@ def send_templated_email(recipients, template_path, context=None,
     recipient_pks = [r.pk for r in recipients if isinstance(r, User)]
     recipient_emails = [e for e in recipients if not isinstance(e, User)]
     send = _send_task.delay if use_celery else _send
-    send(recipient_pks, recipient_emails, template_path, context, from_email,
+    msg = send(recipient_pks, recipient_emails, template_path, context, from_email,
          fail_silently)
+
+    return msg
 
 
 def _send(recipient_pks, recipient_emails, template_path, context, from_email,
@@ -105,6 +107,8 @@ def _send(recipient_pks, recipient_emails, template_path, context, from_email,
         # reset environment to original language
         if isinstance(recipient, User):
             activate(current_language)
+
+        return msg
 if use_celery:
     _send_task = task(_send)
 
