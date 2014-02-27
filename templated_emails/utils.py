@@ -10,8 +10,6 @@ from django.db import models
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth import get_user_model
 
-User = get_user_model()
-
 
 try:
     from celery.task import task
@@ -43,8 +41,8 @@ def send_templated_email(recipients, template_path, context=None,
         if it is users the system will change to the language that the
         user has set as theyr mother toungue
     """
-    recipient_pks = [r.pk for r in recipients if isinstance(r, User)]
-    recipient_emails = [e for e in recipients if not isinstance(e, User)]
+    recipient_pks = [r.pk for r in recipients if isinstance(r, get_user_model())]
+    recipient_emails = [e for e in recipients if not isinstance(e, get_user_model())]
     send = _send_task.delay if use_celery else _send
     msg = send(recipient_pks, recipient_emails, template_path, context, from_email,
          fail_silently, extra_headers=extra_headers)
@@ -54,7 +52,7 @@ def send_templated_email(recipients, template_path, context=None,
 
 def _send(recipient_pks, recipient_emails, template_path, context, from_email,
           fail_silently, extra_headers=None):
-    recipients = list(User.objects.filter(pk__in=recipient_pks))
+    recipients = list(get_user_model().objects.filter(pk__in=recipient_pks))
     recipients += recipient_emails
 
     current_language = get_language()
@@ -70,7 +68,7 @@ def _send(recipient_pks, recipient_emails, template_path, context, from_email,
 
     for recipient in recipients:
         # if it is user, get the email and switch the language
-        if isinstance(recipient, User):
+        if isinstance(recipient, get_user_model()):
             email = recipient.email
             try:
                 language = get_users_language(recipient)
@@ -109,7 +107,7 @@ def _send(recipient_pks, recipient_emails, template_path, context, from_email,
         msg.send(fail_silently=fail_silently)
 
         # reset environment to original language
-        if isinstance(recipient, User):
+        if isinstance(recipient, get_user_model()):
             activate(current_language)
 
         return msg
