@@ -1,5 +1,7 @@
 import logging
 import os
+import threading
+
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from django.template import Context, TemplateDoesNotExist
@@ -16,7 +18,16 @@ try:
 except ImportError:
     task = lambda f: f
 
+use_pynliner = getattr(settings, 'TEMPLATEDEMAILS_USE_PYNLINER', False)
 use_celery = getattr(settings, 'TEMPLATEDEMAILS_USE_CELERY', False)
+use_threading = not use_celery
+
+pynliner = None
+if use_pynliner:
+    try:
+        import pynliner
+    except ImportError:
+        pass
 
 
 class LanguageStoreNotAvailable(Exception):
@@ -50,6 +61,63 @@ def send_templated_email(recipients, template_path, context=None,
     return msg
 
 
+class SendThread(threading.Thread):
+    def __init__(self, recipient, current_language, current_site, default_context,
+                 subject_path, text_path, html_path, from_email=settings.DEFAULT_FROM_EMAIL,
+                 fail_silently=False):
+        self.recipient = recipient
+        self.current_language = current_language
+        self.current_site = current_site
+        self.default_context = default_context
+        self.subject_path = subject_path
+        self.text_path = text_path
+        self.html_path = html_path
+        self.from_email = from_email
+        self.fail_silently = fail_silently
+        super(SendThread, self).__init__()
+
+    def run(self):
+        recipient = self.recipient
+        if isinstance(recipient, User):
+            email = recipient.email
+            try:
+                language = get_users_language(recipient)
+            except LanguageStoreNotAvailable:
+                language = None
+
+            if language is not None:
+                activate(language)
+        else:
+            email = recipient
+
+        # populate per-recipient context
+        context = Context(self.default_context)
+        context['recipient'] = recipient
+        context['email'] = email
+
+        # load email subject, strip and remove line breaks
+        subject = render_to_string(self.subject_path, context).strip()
+        subject = "".join(subject.splitlines())  # this must be a single line
+        text = render_to_string(self.text_path, context)
+
+        msg = EmailMultiAlternatives(subject, text, self.from_email, [email])
+
+        # try to attach the html variant
+        try:
+            body = render_to_string(self.html_path, context)
+            if pynliner:
+                body = pynliner.fromString(body)
+            msg.attach_alternative(body, "text/html")
+        except TemplateDoesNotExist:
+            logging.info("Email sent without HTML, since %s not found" % html_path)
+
+        msg.send(fail_silently=self.fail_silently)
+
+        # reset environment to original language
+        if isinstance(recipient, User):
+            activate(self.current_language)
+
+
 def _send(recipient_pks, recipient_emails, template_path, context, from_email,
           fail_silently, extra_headers=None):
     recipients = list(get_user_model().objects.filter(pk__in=recipient_pks))
@@ -67,6 +135,10 @@ def _send(recipient_pks, recipient_emails, template_path, context, from_email,
     html_path = "%s/email.html" % template_path
 
     for recipient in recipients:
+        if use_threading:
+            SendThread(recipient, current_language, current_site, default_context, subject_path,
+                       text_path, html_path, from_email, fail_silently).start()
+            return
         # if it is user, get the email and switch the language
         if isinstance(recipient, get_user_model()):
             email = recipient.email
@@ -97,8 +169,7 @@ def _send(recipient_pks, recipient_emails, template_path, context, from_email,
         # try to attach the html variant
         try:
             body = render_to_string(html_path, context)
-            if getattr(settings, "TEMPLATEDEMAILS_USE_PYNLINER", False):
-                import pynliner
+            if pynliner:
                 body = pynliner.fromString(body)
             msg.attach_alternative(body, "text/html")
         except TemplateDoesNotExist:
