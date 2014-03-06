@@ -78,7 +78,7 @@ class SendThread(threading.Thread):
 
     def run(self):
         recipient = self.recipient
-        if isinstance(recipient, User):
+        if isinstance(recipient, get_user_model()):
             email = recipient.email
             try:
                 language = get_users_language(recipient)
@@ -114,7 +114,7 @@ class SendThread(threading.Thread):
         msg.send(fail_silently=self.fail_silently)
 
         # reset environment to original language
-        if isinstance(recipient, User):
+        if isinstance(recipient, get_user_model()):
             activate(self.current_language)
 
 
