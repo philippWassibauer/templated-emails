@@ -87,6 +87,6 @@ Follow Me
 =========
 
 * http://github.com/philippWassibauer
-* http://twitter.com/scalar
+* http://twitter.com/__philw__
 * http://philippw.tumblr.com
 * https://bitbucket.org/philippwassibauer
