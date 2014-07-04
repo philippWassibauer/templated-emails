@@ -109,7 +109,7 @@ class SendThread(threading.Thread):
                 body = pynliner.fromString(body)
             msg.attach_alternative(body, "text/html")
         except TemplateDoesNotExist:
-            logging.info("Email sent without HTML, since %s not found" % html_path)
+            logging.info("Email sent without HTML, since %s not found" % self.html_path)
 
         msg.send(fail_silently=self.fail_silently)
 
